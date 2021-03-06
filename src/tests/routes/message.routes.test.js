@@ -263,11 +263,11 @@ describe('Auth Routes', () => {
             })
 
         // Response Assertions
-        expect(res.statusCode).toEqual(200)
+        expect(res.statusCode).toEqual(404)
         expect(res.body).toHaveProperty('success')
-        expect(res.body).toHaveProperty('payload')
-        expect(res.body.payload.message).toEqual('Message is not a palindrome')
-        expect(res.body.payload.check).toBe(false)
+        expect(res.body).toHaveProperty('message')
+        expect(res.body.message).toEqual('Message not found or has been deleted')
+        expect(res.body.success).toBe(false)
         done()
       })
     })
