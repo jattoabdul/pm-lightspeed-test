@@ -13,7 +13,7 @@
     "start:run": "yarn build && yarn start",
     "dev": "nodemon --watch 'src/*' --exec 'yarn build && node ./dist/index'",
     "lint": "./node_modules/.bin/eslint . --fix",
-    "test": "cross-env NODE_ENV=test jest --testTimeout=10000 --runInBand --detectOpenHandles --coverage --forceExit",
+    "test": "cross-env NODE_ENV=test jest --testTimeout=10000 --runInBand --detectOpenHandles --coverage --forceExit --verbose",
     "test:watch": "cross-env NODE_ENV=test jest --testTimeout=10000 --runInBand --detectOpenHandles --watch",
     "pretest": "cross-env NODE_ENV=test echo \\\"Pretesting and Deleting DB Record\\\""
   },
