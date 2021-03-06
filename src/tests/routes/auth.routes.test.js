@@ -157,7 +157,7 @@ describe('Auth Routes', () => {
         // create session add get cookie to be attached to request Cookie
         const agent = await createSession(request, { email: 'admin@gmail.com', password: 'adminpassword' })
         const cookie = agent
-          .headers['set-cookie'][1] // TODO: figure out why not the first value[0]
+          .headers['set-cookie'][1]
           .split(',')
           .map(item => item.split(';')[0])
         expect(cookie).toBeTruthy()
