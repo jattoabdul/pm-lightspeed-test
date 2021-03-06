@@ -1,5 +1,5 @@
 {
-  "name": "pm-lightspeed",
+  "name": "pm-lightspeed-test",
   "version": "0.1.0",
   "description": "A simple REST API that supports the storage and retrieval of messages (strings), and provides the ability to determine whether a message is a palindrome.",
   "main": "index.js",
@@ -19,7 +19,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jattoabdul/pm-lightspeed.git"
+    "url": "git+https://github.com/jattoabdul/pm-lightspeed-test.git"
   },
   "keywords": [
     "Node",
@@ -34,7 +34,7 @@
   "author": "Abdulqahhar Aminujatto <jattoade@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/jattoabdul/pm-lightspeed/issues"
+    "url": "https://github.com/jattoabdul/pm-lightspeed-test/issues"
   },
   "jest": {
     "testEnvironment": "node",
@@ -43,7 +43,7 @@
       "/dist/"
     ]
   },
-  "homepage": "https://github.com/jattoabdul/pm-lightspeed#readme",
+  "homepage": "https://github.com/jattoabdul/pm-lightspeed-test#readme",
   "dependencies": {
     "@babel/cli": "^7.6.4",
     "@babel/core": "^7.6.4",
