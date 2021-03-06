@@ -44,13 +44,37 @@ There should be:
 >  `$ yarn lint`
 
 #### To get started with Docker
-> - TODO
+> - Install Docker
+> - TO Start Containers, Run `$ docker-compose up --build`
+> - To Stop Containers, Run: `$ docker-compose down`
+> ##### To Use Shell Script
+> - Give Start Shell Script Access: `$ chmod +x start.sh`
+> - To See Start Shell Script Commands, Run: `$ ./start.sh -h`
+> - TO Start Containers, Run `$ ./start.sh run`
+> - To Stop Containers, Run: `$ ./start.sh stop`
+> - To Clean Containers, Run: `$ ./start.sh clean`
+> ##### To Use Make
+> - TO Start Containers, Run `$ make up`
+> - To Stop Containers, Run: `$ make down`
+
+#### How to run the test suite in Docker
+> - Run `$ docker-compose exec -e "NODE_ENV=test" pm-lightspeed yarn run test`
+> ##### To Use Make
+> - Run `$ make test`
 
 #### Services (job queues, cache servers, search engines, etc.)
 >- Redis - For Caching & Session Persistence
 
 #### Deployment
-> - TODO
+> - Automatic deployment is set up for the project when you push to master or merge a PR to master
+> - A deployment is made to the staging environment and this can then be promoted to production after proper QA.
+> - When you raise a PR against the master branch, A review app is deployed on Heroku for the branch that raised the PR.
+> ##### Manual Deployment instructions for Heroku
+> - Add the Heroku remote locally `$ git remote add heroku ${heroku_git_url}`
+> - Add and Commit to Git `$ git am 'deploy: deploying to heroku'`
+> - `$ git push heroku master`
+> ##### To Use Make for manual deployment to Heroku
+> - Run `$ make deploy`
 
 #### LICENSE
 >- [MIT License](https://github.com/jattoabdul/andela-bootcamp-postit/blob/master/LICENSE)
