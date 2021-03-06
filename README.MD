@@ -58,7 +58,7 @@ There should be:
 > - To Stop Containers, Run: `$ make down`
 
 #### How to run the test suite in Docker
-> - Run `$ docker-compose run -e "NODE_ENV=test" pm-lightspeed yarn run test -f d`
+> - Run `$ docker-compose exec -e "NODE_ENV=test" pm-lightspeed yarn run test`
 > ##### To Use Make
 > - Run `$ make test`
 

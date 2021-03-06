@@ -3,7 +3,7 @@ up:
 down:
     docker-compose down
 test:
-    docker-compose run -e "RAILS_ENV=test" pm-lightspeed-test yarn run test -f d
+    docker-compose exec -e "NODE_ENV=test" pm-lightspeed yarn run test
 clean:
     @echo "Cleaning..."
 exec:
