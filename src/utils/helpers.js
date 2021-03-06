@@ -81,6 +81,29 @@ export const handleServerError = (response, msg, status = 500) => {
  * App Wide Helpers.
  */
 
+/**
+ * @function cleanAString
+ * @param {String} str string length
+ * @returns {String} Strip non-alphanumeric characters anc convert to lowercase
+ */
+export const cleanAString = (str) => str.toLowerCase().replace(/[\W_]/g, '')
+
+/**
+ * @function isPalindrome
+ * @param {String} word string length
+ * @returns {Boolean} true if word is a palindrome or false if not
+ */
+export const isPalindrome = (word) => {
+  const cleanedStr = cleanAString(word)
+
+  for (let index = 0; index < cleanedStr.length / 2; index++) {
+    if (cleanedStr[index] !== cleanedStr[cleanedStr.length - 1 - index]) {
+      return false
+    }
+  }
+  return true
+}
+
 
 /**
  * Auth Helpers.
