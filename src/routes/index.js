@@ -2,8 +2,9 @@ import express from 'express'
 import { handleServerResponse } from '../utils/helpers'
 
 /**
- * TODO: Import Routes
+ * Import Routes
  */
+import authRoutes from './auth.routes'
 
 const router = express.Router()
 
@@ -12,6 +13,7 @@ const router = express.Router()
  *
  * Use API Routes
  */
+router.use('/auth', authRoutes)
 
 /* GET api home route. */
 router.get('/', (req, res) => {
