@@ -1,0 +1,20 @@
+version: '3'
+
+services:
+  pm-lightspeed:
+    container_name: pm-lightspeed-test
+    restart: on-failure
+    build: .
+    ports:
+      - '3000:3000'
+    links:
+      - redis
+      - mongo
+    env_file:
+      - .env.docker
+  mongo:
+    container_name: pm-lightspeed-mongo
+    image: 'mongo:4'
+  redis:
+    container_name: pm-lightspeed-redis
+    image: 'redis:4.0.11'
