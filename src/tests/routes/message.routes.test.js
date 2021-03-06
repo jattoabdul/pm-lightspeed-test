@@ -85,9 +85,20 @@ describe('Auth Routes', () => {
   })
 
   describe('POST /api/v1/messages/test/palindrome', () => {
-    describe('Any User', () => {
+    describe('Any User with any palindrome string', () => {
       it('should test if a message is a palindrome', async (done) => {
-        expect(true).toBe(true)
+        const res = await request
+            .post('/api/v1/messages/test/palindrome')
+            .send({
+              content: 'A man, a plan, a canal. Panama'
+            })
+
+        // Response Assertions
+        expect(res.statusCode).toEqual(200)
+        expect(res.body).toHaveProperty('success')
+        expect(res.body).toHaveProperty('payload')
+        expect(res.body.payload.message).toEqual('Message is a palindrome')
+        expect(res.body.payload.check).toBe(true)
         done()
       })
     })
