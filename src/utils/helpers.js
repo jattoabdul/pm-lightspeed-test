@@ -1,7 +1,11 @@
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 import 'regenerator-runtime/runtime.js'
 
 import { isString, isObject } from './validator'
 
+import config from './../config'
+import User from './../model/user.model'
 
 /**
  * Request and Response Handlers.
@@ -76,3 +80,157 @@ export const handleServerError = (response, msg, status = 500) => {
 /**
  * App Wide Helpers.
  */
+
+
+/**
+ * Auth Helpers.
+ */
+
+/**
+ * @function hashPassword
+ * @param {string} password password to be hashed
+ * @description hashes a password with bcrypt
+ * @returns {string} password hash
+ */
+export const hashPassword = password => {
+  const saltRounds = config.saltRounds
+  return bcrypt.hashSync(password, parseInt(saltRounds, 10))
+}
+
+/**
+ * @function checkPassword
+ * @param {string} password in ordinary form
+ * @param {string} hash password hash form
+ * @description checks if a password corresponds with saved hash in db
+ * @returns {boolean} true if correct of false if incorrect
+ */
+export const checkPassword = (password, hash) => bcrypt.compareSync(password, hash)
+
+/**
+ * @function createToken
+ * @param {object} data user object from database
+ * @description creates new jwt token for authentication
+ * @returns {String} newly created jwt
+ */
+export const createToken = (data) => {
+  data.created = Date.now()
+  data.expiresBy = Date.now() + (config.tokenLifespan)
+
+  data.issuedEnv = config.environment
+
+  return jwt.sign({ ...data }, config.tokenSecret)
+}
+
+/**
+ * @function validateSession
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ * @returns {object | RequestHandler} response object
+ * @description check if session is active
+ */
+export const validateSession = async (req, res, next) => {
+  if (req.session.accessToken) {
+    return next()
+  }
+  return handleServerError(res, 'Your Session has expired, Please Re-login', 401)
+}
+
+/**
+ * @function validateToken
+ * @param {*} req
+ * @param {*} res
+ * @param {*} next
+ * @returns {object | RequestHandler} response object
+ * @description check if jwt token is appended in header
+ */
+export const validateToken = async (req, res, next) => {
+  let token = req.headers.authorization || req.headers['x-access-token']
+
+  if (token) {
+    if (req.headers.authorization) {
+      if (token.includes('Bearer ')) {
+        token = token.replace('Bearer ', '')
+      }
+    }
+    try {
+      const decoded = jwt.verify(token, config.tokenSecret)
+
+      if (!decoded._id) return handleServerError(res, 'token has no id!', 403)
+
+      const user = await User.findById(decoded._id).select('accessToken')
+
+      if (!user) return handleServerError(res, 'User not found or has been removed', 401)
+
+      if (!user.accessToken || req.session.accessToken !== decoded.authKey || user.accessToken !== decoded.authKey) {
+        return handleServerError(res, 'invalid/expired session and token', 401)
+      }
+
+      req.user = decoded
+
+      return next()
+    } catch (err) {
+      return handleServerError(res, 'Invalid auth token', 401)
+    }
+  }
+  return handleServerError(res, 'You have to be loggedin first', 401)
+}
+
+/**
+ * @function decodeToken
+ * @param {*} token user token to be decoded
+ * @returns {object | RequestHandler} response object
+ * @description decodes Token if jwt token is appended in header
+ */
+export const decodeToken = async token => {
+  if (!token) return {}
+  return new Promise((resolve, reject) => {
+    jwt.verify(token, config.tokenSecret, (err, decoded) => {
+      if (err) {
+        reject(err)
+      } else {
+        resolve(decoded)
+      }
+    })
+  })
+}
+
+/**
+ * @desc ensure request is made by an admin
+ * @function isAdmin
+ * @param {object} req request object
+ * @param {object} res response object
+ * @param {Function} next Next middleware callback
+ * @returns {*} next middleware or error response
+ */
+export const isAdmin = async (req, res, next) => {
+  const {
+    role
+  } = req.user
+
+  if (role && role.toLowerCase().includes('admin')) {
+    return next()
+  } else {
+    return handleServerError(res, 'Only an admin can perform this operation', 401)
+  }
+}
+
+/**
+ @desc ensure request is made by a super admin
+ * @function isSuperAdmin
+ * @param {object} req request object
+ * @param {object} res response object
+ * @param {Function} next Next middleware callback
+ * @returns {*} next middleware or error response
+ */
+export const isSuperAdmin = async (req, res, next) => {
+  const {
+    role
+  } = req.user
+
+  if (role && role.toLowerCase() === 'super_admin') {
+    return next()
+  } else {
+    return handleServerError(res, 'Only special admins can perform this operation', 401)
+  }
+}
