@@ -46,7 +46,7 @@ const disconnectedDB = () => {
 const setupDB = (databaseName) => {
   // Connect to Mongoose
   beforeAll(async () => {
-    const url = config.dbUrl || `mongodb://127.0.0.1/${databaseName}`
+    const url = config.dbUrl || `mongodb://127.0.0.1:27017/${databaseName}`
     await mongoose.connect(url, { useNewUrlParser: true })
   })
 
