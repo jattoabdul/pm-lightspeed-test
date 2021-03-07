@@ -21,9 +21,6 @@ RUN npm audit fix --force
 # Copy app source code
 COPY . .
 
-# Copy .env.docker to workdir/.env - use the docker env
-COPY .env.docker ./.env
-
 # Expose port
 EXPOSE 3000
 

@@ -10,8 +10,17 @@ services:
     links:
       - redis
       - mongo
-    env_file:
-      - .env.docker
+    environment:
+      APP_NAME: PMLightSpeed
+      APP_ENV: local
+      PORT: 3000
+      APP_URL: http://pm-lightspeed-test:3000
+      SALT_ROUND: 10
+      TOKEN_SECRET: RanDomNu3b3r
+      SESSION_SECRET: RanDomNu3b3r
+      TOKEN_LIFESPAN: 259200000
+      REDIS_URL: redis://pm-lightspeed-redis/4
+      DB_URL: mongodb://pm-lightspeed-mongo/pmlightspeed
   mongo:
     container_name: pm-lightspeed-mongo
     image: 'mongo:4'
