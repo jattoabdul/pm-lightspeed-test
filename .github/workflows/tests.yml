@@ -13,7 +13,7 @@ jobs:
       matrix:
         node-version: [12.18.0]
         mongodb-version: [4.0, 4.2, 4.4]
-        redis-version: [4.0.11]
+        redis-version: [4, 5, 6]
 
     steps:
     - name: Git checkout
@@ -34,13 +34,10 @@ jobs:
       with:
         redis-version: ${{ matrix.redis-version }}
 
-    - name: Install Dependencies
-      run: yarn install
-      
-    - name: Build Application
+    - run: yarn install
+
     - run: yarn build
-    
-    - name: Run Test
-      run: yarn test
+
+    - run: yarn test
       env:
         CI: true
