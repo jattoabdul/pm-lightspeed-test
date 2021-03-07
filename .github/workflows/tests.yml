@@ -1,4 +1,4 @@
-name: Tests CI
+name: Run Tests
 
 on:
   push:
@@ -8,19 +8,39 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         node-version: [12.18.0]
+        mongodb-version: [4.0, 4.2, 4.4]
+        redis-version: [4.0.11]
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Git checkout
+      uses: actions/checkout@v2
+      
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - run: yarn install
-    - run: yarn run build
-    - run: yarn test
+        
+    - name: Start MongoDB
+      uses: supercharge/mongodb-github-action@1.3.0
+      with:
+        mongodb-version: ${{ matrix.mongodb-version }}
+    
+    - name: Start Redis
+      uses: supercharge/redis-github-action@1.2.0
+      with:
+        redis-version: ${{ matrix.redis-version }}
+
+    - name: Install Dependencies
+      run: yarn install
+      
+    - name: Build Application
+    - run: yarn build
+    
+    - name: Run Test
+      run: yarn test
+      env:
+        CI: true
