@@ -13,7 +13,7 @@ jobs:
       matrix:
         node-version: [12.18.0]
         mongodb-version: [4.0]
-        redis-version: [4.0.11]
+        redis-version: [4]
 
     steps:
     - name: Git checkout
