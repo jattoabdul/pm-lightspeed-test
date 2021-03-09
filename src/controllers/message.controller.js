@@ -1,10 +1,18 @@
+import crypto from 'crypto'
+import redis from "redis"
+
 import {
   isPalindrome,
   handleServerError,
   handleServerResponse
 } from '../utils/helpers'
+import config from "../config"
 
 import MessageModel from '../model/message.model'
+
+
+const redisURL = config.redisURL
+const redisClient = redis.createClient(redisURL)
 
 /**
  * @method createMessage
@@ -142,6 +150,8 @@ export const isMessageAPalindrome = async (req, res) => {
   try {
     const { id, content } = req.body
     let wordCheck = false
+    let isFromCache = false
+    let wordToBeChecked = ''
 
     if (id) {
       // check if message exists
@@ -150,20 +160,40 @@ export const isMessageAPalindrome = async (req, res) => {
       })
 
       if (!message) return handleServerError(res, 'Message not found or has been deleted', 404)
-
-      wordCheck = isPalindrome(message.content)
+      wordToBeChecked = message.content
     } else if (content) {
-      wordCheck = isPalindrome(content)
+      wordToBeChecked = content
     } else {
       return handleServerError(res, 'Message ID or Content is required', 403)
     }
 
-    return handleServerResponse(res, {
-      success: true,
-      payload: {
-        message: wordCheck ? 'Message is a palindrome' : 'Message is not a palindrome',
-        check: wordCheck
+    // hash the wordToBeChecked
+    let hashedWord = crypto.createHash('md5').update(wordToBeChecked).digest("hex")
+
+    // Try to get wordCheck for hashedWord from redis
+    redisClient.get(hashedWord, (err, data) => {
+      if (err) throw err
+
+      // if data found in redis, return cached wordCheck value for hashedWord
+      if (data) {
+        wordCheck = data === "true"
+        isFromCache = true
+      } else {
+        // else if not found in cache, get wordCheck value for new hashedWord
+        wordCheck = isPalindrome(wordToBeChecked)
+        // set wordCheck value for hashedWord in redis
+        redisClient.setex(hashedWord, 3600, JSON.stringify(wordCheck));
+        isFromCache = false
       }
+
+      return handleServerResponse(res, {
+        success: true,
+        payload: {
+          message: wordCheck ? 'Message is a palindrome' : 'Message is not a palindrome',
+          check: wordCheck,
+          isFromCache: isFromCache
+        }
+      })
     })
   } catch (err) {
     return handleServerError(res, err)
